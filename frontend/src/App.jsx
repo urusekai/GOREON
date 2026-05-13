@@ -7,7 +7,7 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import { completeAuthCheck, login, logout } from "./store/slices/userSlice";
 import api from "./utils/api";
-import { trackPageView } from "@/utils/analytics";
+import { initGoogleAnalytics, trackPageView } from "@/utils/analytics";
 
 const Main = lazy(() => import("./pages/Main/Main"));
 const Search = lazy(() => import("./pages/Search/Search"));
@@ -29,6 +29,10 @@ function App() {
   const dispatch = useDispatch();
   const authChecked = useSelector((state) => state.user.authChecked);
   const location = useLocation();
+
+  useEffect(() => {
+    initGoogleAnalytics();
+  }, []);
 
   useEffect(() => {
     const handleAuthLogout = () => {
