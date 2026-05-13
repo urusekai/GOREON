@@ -2,6 +2,8 @@ const GA_ID = import.meta.env.VITE_GA_ID;
 
 const SHOPPER_SEGMENT_STORAGE_KEY = "goreon:analytics:shopper-segment";
 
+let isGoogleAnalyticsInitialized = false;
+
 export const SHOPPER_SEGMENTS = {
   GUIDED: "guided_shopper",
   SELF_DISCOVERY: "self_discovery_shopper",
@@ -74,6 +76,23 @@ const sanitizeEventParams = (params = {}) =>
   Object.fromEntries(
     Object.entries(params).filter(([, value]) => value !== undefined && value !== null),
   );
+
+export const initGoogleAnalytics = () => {
+  if (typeof window === "undefined" || !GA_ID || isGoogleAnalyticsInitialized) return;
+
+  const gaScript = document.createElement("script");
+  gaScript.async = true;
+  gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+  document.head.appendChild(gaScript);
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag() {
+    window.dataLayer.push(arguments);
+  };
+  window.gtag("js", new Date());
+
+  isGoogleAnalyticsInitialized = true;
+};
 
 const setUserProperties = (properties) => {
   if (typeof window === "undefined" || !window.gtag || !GA_ID) return;
